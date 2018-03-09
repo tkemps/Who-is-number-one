@@ -4,7 +4,8 @@ library(ggplot2)
 verein <- data.table(verein=c("FC Bayern Muenchen","Borussia Dortmund","Eintracht Frankfurt","Bayer Leverkusen","RB Leipzig","FC Schalke 04","Hannover 96","FC Augsburg","1899 Hoffenheim","Borussia Moenchengladbach","Hertha BSC","SC Freiburg","VfB Stuttgart","VfL Wolfsburg","SV Werder Bremen","1. FSV Mainz 05","Hamburger SV","1. FC Koeln"),
 	vereinId=1:18)
 
-#inp <- paste(readLines("stdin", n=-1), collapse="\n")
+# files from http://dbup2date.uni-bayreuth.de/downloads/bundesliga/2018-03-09_bundesliga_CSV.zip
+# inp <- paste(readLines("stdin", n=-1), collapse="\n")
 spiel <- fread("https://raw.githubusercontent.com/tkemps/Who-is-number-one/master/spiel.csv")
 spiel$V9 <- NULL
 spiel <- spiel[Heim<=18 & Gast<=18 & Datum < '2018-03-09']

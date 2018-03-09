@@ -9,6 +9,8 @@ verein <- data.table(verein=c("FC Bayern Muenchen","Borussia Dortmund","Eintrach
 spiel <- fread("https://raw.githubusercontent.com/tkemps/Who-is-number-one/master/spiel.csv")
 spiel$V9 <- NULL
 spiel <- spiel[Heim<=18 & Gast<=18 & Datum < '2018-03-09']
+spiel[, Punkte_Heim := ifelse(Tore_Heim>Tore_Gast,3,ifelse(Tore_Heim==Tore_Gast,1,0))]
+spiel[, Punkte_Gast := ifelse(Tore_Heim>Tore_Gast,0,ifelse(Tore_Heim==Tore_Gast,1,3))]
 str(spiel)
 
 n <- max(pmax.int(spiel$Heim), pmax.int(spiel$Gast))

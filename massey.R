@@ -1,6 +1,54 @@
 library(data.table)
 library(ggplot2)
 
+
+# Multiple plot function
+#
+# ggplot objects can be passed in ..., or to plotlist (as a list of ggplot objects)
+# - cols:   Number of columns in layout
+# - layout: A matrix specifying the layout. If present, 'cols' is ignored.
+#
+# If the layout is something like matrix(c(1,2,3,3), nrow=2, byrow=TRUE),
+# then plot 1 will go in the upper left, 2 will go in the upper right, and
+# 3 will go all the way across the bottom.
+#
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  library(grid)
+
+  # Make a list from the ... arguments and plotlist
+  plots <- c(list(...), plotlist)
+
+  numPlots = length(plots)
+
+  # If layout is NULL, then use 'cols' to determine layout
+  if (is.null(layout)) {
+    # Make the panel
+    # ncol: Number of columns of plots
+    # nrow: Number of rows needed, calculated from # of cols
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                    ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+
+ if (numPlots==1) {
+    print(plots[[1]])
+
+  } else {
+    # Set up the page
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+
+    # Make each plot, in the correct location
+    for (i in 1:numPlots) {
+      # Get the i,j matrix positions of the regions that contain this subplot
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+
+
 verein <- data.table(verein=c("FC Bayern Muenchen","Borussia Dortmund","Eintracht Frankfurt","Bayer Leverkusen","RB Leipzig","FC Schalke 04","Hannover 96","FC Augsburg","1899 Hoffenheim","Borussia Moenchengladbach","Hertha BSC","SC Freiburg","VfB Stuttgart","VfL Wolfsburg","SV Werder Bremen","1. FSV Mainz 05","Hamburger SV","1. FC Koeln"),
 	vereinId=1:18)
 
@@ -72,17 +120,21 @@ print(mr <- massey(spiel, measure="g"))
 summary(lm_mr <- lm(masseyRating~points, data=mr))
 summary(lm_cr <- lm(colleyRating~points, data=mr))
 
-ggplot(mr, aes(Off, Def)) +
+g1 <- ggplot(mr, aes(Off, Def)) +
 	geom_point() +
-    geom_text(aes(Off, Def+0.015, label=Verein))
+    geom_text(aes(Off, Def+0.015, label=Verein), size=2.5)
 
-ggplot(mr, aes(y=masseyRating, x=points)) +
+g2 <- ggplot(mr, aes(y=masseyRating, x=points)) +
 	geom_abline(aes(slope=lm_mr$coefficients[2], intercept= lm_mr$coefficients[1]), color="magenta") +
 	geom_point(color="blue") +
-    geom_text(aes(y=masseyRating+0.03, x=points, label=Verein), color="darkblue")
+	geom_text(aes(y=masseyRating+0.03, x=points, label=Verein), color="darkblue", size=2.5)
 
-#ggplot(mr, aes(y=colleyRating, x=points)) +
-#	geom_abline(aes(slope=lm_cr$coefficients[2], intercept= lm_cr$coefficients[1]), color="magenta") +
-#	geom_point(color="blue") +
-#	geom_text(aes(y=colleyRating+0.0075, x=points, label=Verein), color="darkblue")
+g3 <- ggplot(mr, aes(y=colleyRating, x=points)) +
+	geom_abline(aes(slope=lm_cr$coefficients[2], intercept= lm_cr$coefficients[1]), color="magenta") +
+	geom_point(color="blue") +
+	geom_text(aes(y=colleyRating+0.0075, x=points, label=Verein), color="darkblue", size=2.5)
+
+multiplot(g1,g2,g3, cols=2)
+
+warnings()
 

@@ -134,7 +134,12 @@ g3 <- ggplot(mr, aes(y=colleyRating, x=points)) +
 	geom_point(color="blue") +
 	geom_text(aes(y=colleyRating+0.0075, x=points, label=Verein), color="darkblue", size=2.5)
 
-multiplot(g1,g2,g3, cols=2)
+g4 <- ggplot(mr, aes(y=colleyRating, x=masseyRating)) +
+	geom_smooth() +
+	geom_point(color="blue") +
+	geom_text(aes(y=colleyRating+0.0075, x=masseyRating, label=Verein), color="darkblue", size=2.5)
 
-warnings()
+multiplot(g1,g2,g3,g4, cols=2)
+
+#warnings()
 
